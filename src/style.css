@@ -1,0 +1,67 @@
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game__header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.counter {
+    display: flex;
+}
+
+.timer {
+    display: flex;
+}
+
+.counter__item {
+    background-image: url("./img/numbers/number_0.png");
+    background-size: cover;
+    width: 34px;
+    height: 60px;
+}
+
+.timer__item {
+    background-image: url("./img/numbers/number_0.png");
+    background-size: cover;
+    width: 34px;
+    height: 60px;
+}
+
+.game__restart {
+    background-image: url("./img/smiles/smile_default.png");
+    background-size: cover;
+    width: 60px;
+    height: 60px;
+}
+
+
+.counter {
+
+}
+
+.field {
+    display: grid;
+    grid-template-columns: repeat(16, max-content);
+}
+
+.cell {
+    width: 40px;
+    height: 40px;
+    background-image: url("./img/cells/cell_closed.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: none;
+}
+
+.cell--open {
+    background-image: url("./img/cells/cell_tapped.png");
+}
