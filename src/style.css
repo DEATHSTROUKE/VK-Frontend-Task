@@ -41,6 +41,7 @@
     background-size: cover;
     width: 60px;
     height: 60px;
+    border: none;
 }
 
 
@@ -64,4 +65,12 @@
 
 .cell--open {
     background-image: url("./img/cells/cell_tapped.png");
+}
+
+.cell--flag {
+    background-image: url("./img/cells/cell_flag.png");
+}
+
+.cell--question {
+    background-image: url("./img/cells/cell_question.png");
 }
