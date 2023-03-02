@@ -1,3 +1,13 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background-color: #bde0ff;
+}
+
 .container {
     max-width: 1100px;
     margin: 0 auto;
@@ -7,6 +17,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 15px;
 }
 
 .game__wrapper {
@@ -65,4 +76,45 @@
     background-size: cover;
     border: none;
     transition: background-image .1s ease;
+}
+
+@media screen and (max-width: 690px) {
+    .cell {
+        width: 30px;
+        height: 30px;
+    }
+
+    .counter__item, .timer__item {
+        width: 28px;
+        height: 50px;
+    }
+
+    .game__restart {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media screen and (max-width: 530px) {
+    .cell {
+        width: 25px;
+        height: 25px;
+    }
+
+    .counter__item, .timer__item {
+        width: 23px;
+        height: 40px;
+    }
+
+    .game__restart {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .cell {
+        width: 20px;
+        height: 20px;
+    }
 }

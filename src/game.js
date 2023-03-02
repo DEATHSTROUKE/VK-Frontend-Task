@@ -1,6 +1,5 @@
-const WIDTH = 16;
-const HEIGHT = 16;
-const BOMBS_COUNT = 40;
+'use strict';
+import {WIDTH, HEIGHT, BOMBS_COUNT, IMAGES} from './constants.js'
 
 function startGame() {
     const cellCount = WIDTH * HEIGHT;
@@ -19,8 +18,7 @@ function startGame() {
     const cells = Array.from(field.children);
     const counterItems = Array.from(document.querySelector('.counter').children);
     const timerItems = Array.from(document.querySelector('.timer').children);
-    const imgs = Array.from(Array(10).keys()).map((el) =>
-        new Image().src = `./img/numbers/number_${el}.png`);
+    const imgs = [...IMAGES.map(el => new Image().src = el)] //preload images
 
     smile.addEventListener('mousedown', () => {
         updateSmile('tapped');
@@ -38,10 +36,12 @@ function startGame() {
         let index = cells.indexOf(e.target);
         let cell = cells[index]
         if (e.button === 0) {
-            if (stateField[index] === 'closed' || stateField[index] === 'question') {
+            if (stateField[index] === 'closed') {
                 stateField[index] = 'tapped';
-
                 updateCellImg(cell, 'tapped');
+            } else if (stateField[index] === 'question') {
+                stateField[index] = 'tapped';
+                updateCellImg(cell, 'question_tapped');
             }
         } else if (e.button === 2) {
             e.preventDefault();
