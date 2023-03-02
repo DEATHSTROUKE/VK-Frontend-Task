@@ -4,18 +4,26 @@ const BOMBS_COUNT = 40;
 
 function startGame() {
     const cellCount = WIDTH * HEIGHT;
-    let bomb_counter = BOMBS_COUNT;
+    let flagCount = BOMBS_COUNT;
+    let closedCellsCount = WIDTH * HEIGHT - BOMBS_COUNT;
     let timer = 0;
+    let timerElem = null;
     let bombs = [];
     let firstMove = true;
+    let stateField = [];
+    let hasFinished = false;
 
     const field = document.querySelector('.field');
     const smile = document.querySelector('.game__restart');
     field.innerHTML = '<button class="cell"></button>'.repeat(cellCount);
     const cells = Array.from(field.children);
+    const counterItems = Array.from(document.querySelector('.counter').children);
+    const timerItems = Array.from(document.querySelector('.timer').children);
+    const imgs = Array.from(Array(10).keys()).map((el) =>
+        new Image().src = `./img/numbers/number_${el}.png`);
 
     smile.addEventListener('mousedown', () => {
-        smileChange(smile, 'tapped');
+        updateSmile('tapped');
     });
     smile.addEventListener('mouseup', resetGame);
 
@@ -24,32 +32,51 @@ function startGame() {
     field.addEventListener('contextmenu', e => e.preventDefault());
     resetGame();
 
-    //TODO добавить обработчики на события mousedown / mouseup,
-    // клик на смайл (mousedown / mouseup) и contextmenu на поле
-
     function onCellDown(e) {
-        if (!e.target.classList.contains("cell")) return;
-        //TODO запустить таймер
-
+        if (!e.target.classList.contains("cell") || hasFinished) return;
+        updateSmile('scared');
+        let index = cells.indexOf(e.target);
+        let cell = cells[index]
         if (e.button === 0) {
-            // e.target.classList.add('cell--open');
+            if (stateField[index] === 'closed' || stateField[index] === 'question') {
+                stateField[index] = 'tapped';
+
+                updateCellImg(cell, 'tapped');
+            }
         } else if (e.button === 2) {
             e.preventDefault();
-            e.target.classList.add('cell--flag');
+            if (stateField[index] === 'closed') {
+                stateField[index] = 'flag';
+                updateCellImg(cell, 'flag');
+                flagCount--;
+                updateCounter(flagCount);
+            } else if (stateField[index] === 'flag') {
+                stateField[index] = 'question';
+                updateCellImg(cell, 'question');
+                flagCount++;
+                updateCounter(flagCount);
+            } else if (stateField[index] === 'question') {
+                stateField[index] = 'closed';
+                updateCellImg(cell, 'closed');
+            }
         }
     }
 
     function onCellUp(e) {
-        if (!e.target.classList.contains("cell")) return;
+        if (!e.target.classList.contains("cell") || hasFinished) return;
+        updateSmile('default');
 
         if (e.button === 0) {
             let index = cells.indexOf(e.target);
             let cellRow = Math.floor(index / WIDTH);
             let cellColumn = index % WIDTH;
-            console.log(index, cellRow, cellColumn)
             if (firstMove) {
                 firstMove = false;
                 generateBombs(index);
+                timerElem = setInterval(() => {
+                    timer++;
+                    updateTimer(timer);
+                }, 1000);
             }
 
             openCell(cellRow, cellColumn);
@@ -57,13 +84,18 @@ function startGame() {
     }
 
     function resetGame() {
-        bomb_counter = BOMBS_COUNT;
+        clearInterval(timerElem);
+        updateTimer(0);
+        flagCount = BOMBS_COUNT;
+        closedCellsCount = WIDTH * HEIGHT - BOMBS_COUNT;
         timer = 0;
         firstMove = true;
-        smileChange(smile, 'default');
+        hasFinished = false;
+        stateField = Array(cellCount).fill('closed');
+        updateSmile('default');
+        updateCounter(flagCount);
         for (let cell of cells) {
-            cell.classList = 'cell';
-            changeCellImg(cell, 'closed');
+            updateCellImg(cell, 'closed');
         }
     }
 
@@ -82,17 +114,23 @@ function startGame() {
     }
 
     function openCell(cellRow, cellColumn) {
-        //TODO провека на бомбу, если да, то завершение игры
         if (!isCellExist(cellRow, cellColumn)) return;
-        if (isBomb(cellRow, cellColumn)) return;
         let index = cellRow * WIDTH + cellColumn;
         let cell = cells[index];
-        if (cell.classList.contains('cell--open')) return;
+        if (stateField[index] === 'opened') return;
+        if (isBomb(cellRow, cellColumn)) {
+            stateField[index] = 'boom';
+            finishGame('lose');
+            return;
+        }
 
         let bombCount = getBombCount(cellRow, cellColumn);
-        cell.classList.add('cell--open');
-        bombCount !== 0 ? changeCellImg(cell, bombCount) : changeCellImg(cell, 'tapped');
-        console.log(bombCount);
+        stateField[index] = 'opened'
+        bombCount !== 0 ? updateCellImg(cell, bombCount) : updateCellImg(cell, 'tapped');
+        closedCellsCount--;
+        if (closedCellsCount === 0) {
+            finishGame('win');
+        }
 
         if (bombCount === 0) {
             for (let i = -1; i <= 1; i++) {
@@ -126,24 +164,46 @@ function startGame() {
         return cellRow >= 0 && cellRow < HEIGHT && cellColumn >= 0 && cellColumn < WIDTH;
     }
 
-    function finishGame() {
-        //TODO Открыть все ячейки, остановить таймер
+    function finishGame(status) {
+        clearInterval(timerElem);
+        hasFinished = true;
+        updateSmile(status);
+        for (let i = 0; i < cellCount; i++) {
+            if (stateField[i] === 'boom') {
+                updateCellImg(cells[i], 'bomb_dead');
+            } else if ((stateField[i] === 'closed' || stateField[i] === 'question') &&
+                bombs.includes(i)) {
+                updateCellImg(cells[i], 'bomb');
+            } else if (stateField[i] === 'flag' && !bombs.includes(i)) {
+                updateCellImg(cells[i], 'bomb_wrong');
+            }
+        }
     }
 
-    function smileChange(smile, icon) {
+    function updateSmile(icon) {
         smile.style.backgroundImage = `url('./img/smiles/smile_${icon}.png')`;
     }
 
-    function changeCellImg(cell, img) {
+    function updateCellImg(cell, img) {
         cell.style.backgroundImage = `url('./img/cells/cell_${img}.png')`;
     }
 
-    function changeCounter() {
-        //TODO смена картинки на счетчике
+    function updateCounter(count) {
+        count = Math.max(count, 0).toString().padStart(3, '0');
+        for (let i = 0; i < 3; i++) {
+            updateNumberElement(counterItems[i], count[i]);
+        }
     }
 
-    function timerChange() {
-        //TODO изменение таймера
+    function updateTimer(count) {
+        count = Math.min(count, 999).toString().padStart(3, '0');
+        for (let i = 0; i < 3; i++) {
+            updateNumberElement(timerItems[i], count[i]);
+        }
+    }
+
+    function updateNumberElement(elem, num) {
+        elem.style.backgroundImage = `url('./img/numbers/number_${num}.png')`;
     }
 }
 

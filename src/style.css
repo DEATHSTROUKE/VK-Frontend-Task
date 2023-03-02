@@ -9,49 +9,52 @@
     align-items: center;
 }
 
-.game__header {
+.game__wrapper {
+    border: 5px outset;
+    background-color: #bdbdbd;
+    padding: 15px;
+}
+
+.header {
+    border-bottom: 15px solid #bdbdbd;
+    background-color: #c0c0c0;
+}
+
+.header__wrapper {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    border: 5px inset;
+    padding: 10px 15px;
 }
 
-.counter {
+.counter, .timer {
     display: flex;
 }
 
-.timer {
-    display: flex;
-}
-
-.counter__item {
+.counter__item, .timer__item {
     background-image: url("./img/numbers/number_0.png");
     background-size: cover;
     width: 34px;
     height: 60px;
-}
-
-.timer__item {
-    background-image: url("./img/numbers/number_0.png");
-    background-size: cover;
-    width: 34px;
-    height: 60px;
+    transition: background-image .1s ease;
 }
 
 .game__restart {
     background-image: url("./img/smiles/smile_default.png");
     background-size: cover;
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     border: none;
+    transition: background-image .1s ease;
 }
 
-
-.counter {
-
-}
 
 .field {
     display: grid;
     grid-template-columns: repeat(16, max-content);
+    border: 5px inset;
+    background-color: #7b7b7b;
 }
 
 .cell {
@@ -61,16 +64,5 @@
     background-repeat: no-repeat;
     background-size: cover;
     border: none;
-}
-
-.cell--open {
-    background-image: url("./img/cells/cell_tapped.png");
-}
-
-.cell--flag {
-    background-image: url("./img/cells/cell_flag.png");
-}
-
-.cell--question {
-    background-image: url("./img/cells/cell_question.png");
+    transition: background-image .1s ease;
 }
