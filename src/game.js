@@ -10,6 +10,7 @@ function startGame() {
     let firstMove = true;
     let stateField = [];
     let hasFinished = false;
+    let timeStampStart;
 
     const field = document.querySelector('.field');
     const smile = document.querySelector('.game__restart');
@@ -24,13 +25,16 @@ function startGame() {
     });
     smile.addEventListener('mouseup', resetGame);
 
-    field.addEventListener('mousedown', onCellDown);
-    field.addEventListener('mouseup', onCellUp);
+    field.addEventListener('mousedown', e => onCellDown(e, false));
+    field.addEventListener('mouseup', e => onCellUp(e, false));
     field.addEventListener('contextmenu', e => e.preventDefault());
+    field.addEventListener("touchstart", e => onCellDown(e, true));
+    field.addEventListener("touchend", e => onCellUp(e, true));
     resetGame();
 
-    function onCellDown(e) {
+    function onCellDown(e, isMobile) {
         if (!e.target.classList.contains("cell") || hasFinished) return;
+        if (isMobile) timeStampStart = e.timeStamp;
         updateSmile('scared');
         let index = cells.indexOf(e.target);
         let cell = cells[index]
@@ -42,7 +46,28 @@ function startGame() {
                 stateField[index] = 'tapped';
                 updateCellImg(cell, 'question_tapped');
             }
-        } else if (e.button === 2) {
+        }
+    }
+
+    function onCellUp(e, isMobile) {
+        if (!e.target.classList.contains("cell") || hasFinished) return;
+        updateSmile('default');
+        let index = cells.indexOf(e.target);
+        let cell = cells[index]
+        let cellRow = Math.floor(index / WIDTH);
+        let cellColumn = index % WIDTH;
+        if (e.button === 0) {
+            if (firstMove) {
+                firstMove = false;
+                generateBombs(index);
+                timerElem = setInterval(() => {
+                    timer++;
+                    updateTimer(timer);
+                }, 1000);
+            }
+
+            openCell(cellRow, cellColumn);
+        } else if (e.button === 0 || (isMobile && e.timeStamp - timeStampStart >= 300)) {
             e.preventDefault();
             if (stateField[index] === 'closed') {
                 stateField[index] = 'flag';
@@ -58,27 +83,6 @@ function startGame() {
                 stateField[index] = 'closed';
                 updateCellImg(cell, 'closed');
             }
-        }
-    }
-
-    function onCellUp(e) {
-        if (!e.target.classList.contains("cell") || hasFinished) return;
-        updateSmile('default');
-
-        if (e.button === 0) {
-            let index = cells.indexOf(e.target);
-            let cellRow = Math.floor(index / WIDTH);
-            let cellColumn = index % WIDTH;
-            if (firstMove) {
-                firstMove = false;
-                generateBombs(index);
-                timerElem = setInterval(() => {
-                    timer++;
-                    updateTimer(timer);
-                }, 1000);
-            }
-
-            openCell(cellRow, cellColumn);
         }
     }
 
