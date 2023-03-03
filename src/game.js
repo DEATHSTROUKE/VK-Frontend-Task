@@ -10,7 +10,7 @@ function startGame() {
     let firstMove = true;
     let stateField = [];
     let hasFinished = false;
-    let timeStampStart;
+    let timeStampCellDownEvent;
 
     const field = document.querySelector('.field');
     const smile = document.querySelector('.game__restart');
@@ -34,7 +34,7 @@ function startGame() {
 
     function onCellDown(e, isMobile) {
         if (!e.target.classList.contains("cell") || hasFinished) return;
-        if (isMobile) timeStampStart = e.timeStamp;
+        if (isMobile) timeStampCellDownEvent = e.timeStamp;
         updateSmile('scared');
         let index = cells.indexOf(e.target);
         let cell = cells[index]
@@ -67,7 +67,7 @@ function startGame() {
             }
 
             openCell(cellRow, cellColumn);
-        } else if (e.button === 0 || (isMobile && e.timeStamp - timeStampStart >= 300)) {
+        } else if (e.button === 2 || (isMobile && e.timeStamp - timeStampCellDownEvent >= 300)) {
             e.preventDefault();
             if (stateField[index] === 'closed') {
                 stateField[index] = 'flag';
@@ -120,7 +120,7 @@ function startGame() {
         if (!isCellExist(cellRow, cellColumn)) return;
         let index = cellRow * WIDTH + cellColumn;
         let cell = cells[index];
-        if (stateField[index] === 'opened') return;
+        if (stateField[index] === 'opened' || stateField[index] === 'flag') return;
         if (isBomb(cellRow, cellColumn)) {
             stateField[index] = 'boom';
             finishGame('lose');
