@@ -1,5 +1,4 @@
 'use strict';
-import {WIDTH, HEIGHT, BOMBS_COUNT, IMAGES} from './constants.js'
 
 function startGame() {
     const cellCount = WIDTH * HEIGHT;

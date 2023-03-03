@@ -1,7 +1,7 @@
-export const WIDTH = 16;
-export const HEIGHT = 16;
-export const BOMBS_COUNT = 40;
-export const IMAGES = [
+const WIDTH = 16;
+const HEIGHT = 16;
+const BOMBS_COUNT = 40;
+const IMAGES = [
     './img/cells/cell_1.png', './img/cells/cell_2.png', './img/cells/cell_3.png',
     './img/cells/cell_4.png', './img/cells/cell_5.png', './img/cells/cell_6.png',
     './img/cells/cell_7.png', './img/cells/cell_8.png', './img/cells/cell_bomb.png',

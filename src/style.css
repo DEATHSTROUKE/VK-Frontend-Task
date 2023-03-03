@@ -78,7 +78,7 @@ body {
     transition: background-image .1s ease;
 }
 
-@media screen and (max-width: 690px) {
+@media screen and (max-width: 690px), screen and (max-height: 820px) {
     .cell {
         width: 30px;
         height: 30px;
@@ -95,7 +95,7 @@ body {
     }
 }
 
-@media screen and (max-width: 530px) {
+@media screen and (max-width: 530px), screen and (max-height: 660px) {
     .cell {
         width: 25px;
         height: 25px;
@@ -112,7 +112,7 @@ body {
     }
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 450px), screen and (max-height: 570px) {
     .cell {
         width: 20px;
         height: 20px;
