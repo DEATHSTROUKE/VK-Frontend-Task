@@ -9,7 +9,8 @@ function startGame() {
     let bombs = [];
     let firstMove = true;
     let stateField = [];
-    let hasFinished = false;
+    let finishStatus = null;
+    let isClick = false;
     let timeStampCellDownEvent;
 
     const field = document.querySelector('.field');
@@ -20,9 +21,9 @@ function startGame() {
     const timerItems = Array.from(document.querySelector('.timer').children);
     const imgs = [...IMAGES.map(el => new Image().src = el)] //preload images
 
-    smile.addEventListener('mousedown', () => {
-        updateSmile('tapped');
-    });
+    smile.addEventListener('mousedown', () => updateSmile('tapped'));
+    smile.addEventListener('mouseout', () =>
+        updateSmile(finishStatus ?? 'default'));
     smile.addEventListener('mouseup', resetGame);
 
     field.addEventListener('mousedown', e => onCellDown(e, false));
@@ -30,14 +31,32 @@ function startGame() {
     field.addEventListener('contextmenu', e => e.preventDefault());
     field.addEventListener("touchstart", e => onCellDown(e, true));
     field.addEventListener("touchend", e => onCellUp(e, true));
+    cells.forEach(el => {
+        el.addEventListener('mouseover', e =>
+            onCellOver(e,'closed', 'tapped'));
+
+        el.addEventListener('mouseout', e =>
+            onCellOver(e,'tapped', 'closed'));
+    });
     resetGame();
 
+    function onCellOver(e, changeFrom, changeTo) {
+        if (isClick) {
+            let indexTarget = cells.indexOf(e.target);
+            if (stateField[indexTarget] === changeFrom) {
+                stateField[indexTarget] = changeTo;
+                updateCellImg(e.target, changeTo);
+            }
+        }
+    }
+
     function onCellDown(e, isMobile) {
-        if (!e.target.classList.contains("cell") || hasFinished) return;
+        if (!e.target.classList.contains("cell") || finishStatus) return;
         if (isMobile) timeStampCellDownEvent = e.timeStamp;
         updateSmile('scared');
+        isClick = true;
         let index = cells.indexOf(e.target);
-        let cell = cells[index]
+        let cell = cells[index];
         if (e.button === 0) {
             if (stateField[index] === 'closed') {
                 stateField[index] = 'tapped';
@@ -50,8 +69,9 @@ function startGame() {
     }
 
     function onCellUp(e, isMobile) {
-        if (!e.target.classList.contains("cell") || hasFinished) return;
+        if (!e.target.classList.contains("cell") || finishStatus) return;
         updateSmile('default');
+        isClick = false;
         let index = cells.indexOf(e.target);
         let cell = cells[index]
         let cellRow = Math.floor(index / WIDTH);
@@ -93,7 +113,8 @@ function startGame() {
         closedCellsCount = WIDTH * HEIGHT - BOMBS_COUNT;
         timer = 0;
         firstMove = true;
-        hasFinished = false;
+        finishStatus = null;
+        let isClick = false;
         stateField = Array(cellCount).fill('closed');
         updateSmile('default');
         updateCounter(flagCount);
@@ -169,7 +190,7 @@ function startGame() {
 
     function finishGame(status) {
         clearInterval(timerElem);
-        hasFinished = true;
+        finishStatus = status;
         updateSmile(status);
         for (let i = 0; i < cellCount; i++) {
             if (stateField[i] === 'boom') {

@@ -76,6 +76,7 @@ body {
     background-size: cover;
     border: none;
     transition: background-image .1s ease;
+    -webkit-transition: background-image .1s ease;
 }
 
 @media screen and (max-width: 690px), screen and (max-height: 820px) {

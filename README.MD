@@ -1,4 +1,4 @@
-## Сапер
+# Сапер
 
 [Игра тут](https://deathstrouke.github.io/VK-Frontend-Task/)
 
