@@ -15,7 +15,7 @@ function startGame() {
 
     const field = document.querySelector('.field');
     const smile = document.querySelector('.game__restart');
-    field.innerHTML = '<button class="cell"></button>'.repeat(cellCount);
+    field.innerHTML = '<div class="cell"></div>'.repeat(cellCount);
     const cells = Array.from(field.children);
     const counterItems = Array.from(document.querySelector('.counter').children);
     const timerItems = Array.from(document.querySelector('.timer').children);
@@ -29,6 +29,7 @@ function startGame() {
     field.addEventListener('mousedown', e => onCellDown(e, false));
     field.addEventListener('mouseup', e => onCellUp(e, false));
     field.addEventListener('contextmenu', e => e.preventDefault());
+    field.addEventListener('dblclick', e => e.preventDefault());
     field.addEventListener("touchstart", e => onCellDown(e, true));
     field.addEventListener("touchend", e => onCellUp(e, true));
     cells.forEach(el => {
@@ -52,8 +53,11 @@ function startGame() {
 
     function onCellDown(e, isMobile) {
         if (!e.target.classList.contains("cell") || finishStatus) return;
-        if (isMobile) timeStampCellDownEvent = e.timeStamp;
         updateSmile('scared');
+        if (isMobile) {
+            timeStampCellDownEvent = e.timeStamp;
+            return;
+        }
         isClick = true;
         let index = cells.indexOf(e.target);
         let cell = cells[index];
