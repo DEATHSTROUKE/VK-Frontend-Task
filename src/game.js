@@ -62,6 +62,7 @@ function startGame() {
         let index = cells.indexOf(e.target);
         let cell = cells[index];
         if (e.button === 0) {
+            console.log(stateField[index])
             if (stateField[index] === 'closed') {
                 stateField[index] = 'tapped';
                 updateCellImg(cell, 'tapped');
@@ -73,7 +74,7 @@ function startGame() {
     }
 
     function onCellUp(e, isMobile) {
-        if (!e.target.classList.contains("cell") || finishStatus) return;
+        if (!e.target.classList.contains("cell") || finishStatus || e.buttons !== 0) return;
         updateSmile('default');
         isClick = false;
         let index = cells.indexOf(e.target);
@@ -92,6 +93,7 @@ function startGame() {
 
             openCell(cellRow, cellColumn);
         } else if (e.button === 2 || (isMobile && e.timeStamp - timeStampCellDownEvent >= 300)) {
+            console.log(stateField[index])
             e.preventDefault();
             if (stateField[index] === 'closed') {
                 stateField[index] = 'flag';
@@ -118,7 +120,7 @@ function startGame() {
         timer = 0;
         firstMove = true;
         finishStatus = null;
-        let isClick = false;
+        isClick = false;
         stateField = Array(cellCount).fill('closed');
         updateSmile('default');
         updateCounter(flagCount);
