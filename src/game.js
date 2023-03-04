@@ -30,14 +30,20 @@ function startGame() {
     field.addEventListener('mouseup', e => onCellUp(e, false));
     field.addEventListener('contextmenu', e => e.preventDefault());
     field.addEventListener('dblclick', e => e.preventDefault());
-    field.addEventListener("touchstart", e => onCellDown(e, true));
-    field.addEventListener("touchend", e => onCellUp(e, true));
+    field.addEventListener("touchstart", e => {
+        e.preventDefault();
+        onCellDown(e, true);
+    });
+    field.addEventListener("touchend", e => {
+        e.preventDefault();
+        onCellUp(e, true);
+    });
     cells.forEach(el => {
         el.addEventListener('mouseover', e =>
-            onCellOver(e,'closed', 'tapped'));
+            onCellOver(e, 'closed', 'tapped'));
 
         el.addEventListener('mouseout', e =>
-            onCellOver(e,'tapped', 'closed'));
+            onCellOver(e, 'tapped', 'closed'));
     });
     resetGame();
 
